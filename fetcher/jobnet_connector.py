@@ -14,7 +14,7 @@ jobnet_url = "https://jobnet.dk/bff/FindJob/Search"
 logging.basicConfig(stream=sys.stdout,
                     level=logging.INFO,
                     format="%(asctime)s %(levelname)s: %(message)s")
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 def get_ads(
@@ -22,15 +22,13 @@ def get_ads(
         page_number: int = 1,
         params=None
 ):
-    if params is None: params = {
-        "orderType": "PublicationDate",
-    }
-
+    if params is None: params = { }
     params["resultsPerPage"] = n_ads
     params["pageNumber"] = page_number
+    params["orderType"] = "PublicationDate"
 
     result = requests.get(jobnet_url, params=params)
-    logger.info(f"GET from {result.url}: {result.status_code=}")
+    log.info(f"GET from {result.url}: {result.status_code=}")
 
     if not result.ok:
         return FetchResult.error(f"ERROR: {result.text}, {result.status_code=}")
@@ -39,22 +37,42 @@ def get_ads(
 
 
 def extract_ads(ad_dict: dict) -> tuple[Any, Any, datetime]:
+    """Extracts the actual ads from response that also includes
+    things like facets and more.
+
+    :param ad_dict: a response dictionary from jobnet.
+    :return: tuple with
+        - jobAds list
+        - total number of found ads
+        - extraction time
+    """
     return (ad_dict["jobAds"],
             ad_dict["totalJobAdCount"],
             datetime.now(timezone.utc))
 
 
+def display_ads(ad_list: list[dict[Any]]):
+    pass
+
 
 def run():
     print("jobnet_connector test run...")
-    ads_result = get_ads()
-    if ads_result.ok():
-        ads, total, time = extract_ads(ads_result.payload)
-        print(len(ads))
-        print(total)
-        print(time)
-    else:
+    params = {
+        "searchString": "Java",
+        # "kmRadius": "10",
+        # "postalCode": "1650"
+    }
+    ads_result = get_ads(params=params)
+    if not ads_result.ok():
         print(ads_result.msg)
+        return
+
+    ads, total, time = extract_ads(ads_result.payload)
+    log.info(f"""
+    Number of ads fetched: {len(ads)}
+    total number of ads: {total}
+    fetched at: {time}""");
+
 
 
 
