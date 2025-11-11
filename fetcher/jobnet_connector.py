@@ -2,15 +2,14 @@
 import sys
 from datetime import datetime, timezone
 from typing import Any
-
+import pandas as pd
 import requests
 import logging
 
-from fetch_result import FetchResult
-
+from .fetch_result import FetchResult
+from .fetch_result import SearchResult
 
 jobnet_url = "https://jobnet.dk/bff/FindJob/Search"
-
 logging.basicConfig(stream=sys.stdout,
                     level=logging.INFO,
                     format="%(asctime)s %(levelname)s: %(message)s")
@@ -36,6 +35,31 @@ def get_ads(
         return FetchResult.success(result.json())
 
 
+def search_ads(
+        page_size: int = 10,
+        page_number: int = 1,
+        search_terms: str = "",
+        km_radius: int = -1,
+        postal_code: int = -1
+) -> SearchResult | FetchResult:
+    params = {"searchString": search_terms}
+    if km_radius > -1: params["kmRadius"] = km_radius
+    if postal_code > -1: params["postalCode"] = postal_code
+    now = datetime.now(timezone.utc)
+
+    fetch_result: FetchResult = get_ads(
+        page_size,
+        page_number,
+        params)
+
+    if not fetch_result.success:
+        log.error(fetch_result)
+        return fetch_result
+    else:
+        search_result: SearchResult = SearchResult(fetch_result, params, now)
+        return search_result
+
+
 def extract_ads(ad_dict: dict) -> tuple[Any, Any, datetime]:
     """Extracts the actual ads from response that also includes
     things like facets and more.
@@ -52,29 +76,18 @@ def extract_ads(ad_dict: dict) -> tuple[Any, Any, datetime]:
 
 
 def display_ads(ad_list: list[dict[Any]]):
-    pass
-
-
-def run():
-    print("jobnet_connector test run...")
-    params = {
-        "searchString": "Java",
-        # "kmRadius": "10",
-        # "postalCode": "1650"
-    }
-    ads_result = get_ads(params=params)
-    if not ads_result.ok():
-        print(ads_result.msg)
-        return
-
-    ads, total, time = extract_ads(ads_result.payload)
-    log.info(f"""
-    Number of ads fetched: {len(ads)}
-    total number of ads: {total}
-    fetched at: {time}""");
+    desired_columns = [
+        "postalCode",
+        "postalDistrictName",
+        "hiringOrgName",
+        "occupation",
+        "jobAdUrl",
+        "title",
+        "workPlaceAddress"
+    ]
+    df = pd.DataFrame(ad_list)
+    print(df[desired_columns])
 
 
 
 
-if __name__ == "__main__":
-    run()
