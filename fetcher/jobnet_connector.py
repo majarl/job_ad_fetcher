@@ -7,7 +7,7 @@ import requests
 import logging
 
 from .fetch_result import FetchResult
-from .fetch_result import SearchResult
+from .search_result import SearchResult
 
 jobnet_url = "https://jobnet.dk/bff/FindJob/Search"
 logging.basicConfig(stream=sys.stdout,
