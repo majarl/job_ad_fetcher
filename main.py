@@ -38,4 +38,4 @@ def create_search_params():
 
 
 if __name__ == "__main__":
-    do_search()
+    create_search_params()
