@@ -1,4 +1,3 @@
-
 import logging
 import sys
 from datetime import datetime, timezone
@@ -8,6 +7,9 @@ import pandas as pd
 import requests
 
 from .fetch_result import FetchResult
+from .search_params import SearchParams
+from .search_result import SearchResult
+
 
 jobnet_url = "https://jobnet.dk/bff/FindJob/Search"
 logging.basicConfig(stream=sys.stdout,
@@ -26,6 +28,20 @@ def get_ads(params=None):
         return FetchResult.error(f"ERROR: {result.text}, {result.status_code=}")
     else:
         return FetchResult.success(result.json())
+
+
+def search_ads(search_params: SearchParams) -> SearchResult | FetchResult:
+    params = search_params.to_params()
+    now = datetime.now(timezone.utc)
+
+    fetch_result: FetchResult = get_ads(params)
+
+    if not fetch_result.success:
+        print(fetch_result)
+        return fetch_result
+    else:
+        search_result: SearchResult = SearchResult(fetch_result, params, now)
+        return search_result
 
 
 

@@ -1,4 +1,5 @@
-from fetcher.search_result import search_ads, SearchParams
+from fetcher.jobnet_connector import search_ads
+from fetcher.search_result import SearchParams
 from pprint import pprint
 
 def do_search():
@@ -38,4 +39,4 @@ def create_search_params():
 
 
 if __name__ == "__main__":
-    create_search_params()
+    do_search()

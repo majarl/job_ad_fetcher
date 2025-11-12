@@ -2,7 +2,6 @@ from datetime import datetime, timezone
 
 from .fetch_result import FetchResult
 from .search_params import SearchParams
-from .jobnet_connector import get_ads
 
 
 class SearchResult:
@@ -32,20 +31,3 @@ class AllSearchResults:
     search_results: list[SearchResult]
     pass
 
-
-
-
-
-
-def search_ads(search_params: SearchParams) -> SearchResult | FetchResult:
-    params = search_params.to_params()
-    now = datetime.now(timezone.utc)
-
-    fetch_result: FetchResult = get_ads(params)
-
-    if not fetch_result.success:
-        print(fetch_result)
-        return fetch_result
-    else:
-        search_result: SearchResult = SearchResult(fetch_result, params, now)
-        return search_result
