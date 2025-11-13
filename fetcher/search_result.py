@@ -25,9 +25,3 @@ class SearchResult:
         {self.number_of_hits=}
         {len(self.job_ads)}
         """
-
-
-class AllSearchResults:
-    search_results: list[SearchResult]
-    pass
-

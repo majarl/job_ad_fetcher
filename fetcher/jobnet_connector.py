@@ -18,7 +18,10 @@ logging.basicConfig(stream=sys.stdout,
 log = logging.getLogger(__name__)
 
 
-def get_ads(params=None):
+def get_ads(params: dict = None):
+    """Concrete execution of GET request of jobnet search endpoint.
+    :type params: Dictionary of request parameters generated with
+            SearchParameter.to_params()."""
     if params is None: params = { }
 
     result = requests.get(jobnet_url, params=params)

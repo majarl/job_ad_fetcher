@@ -1,3 +1,4 @@
+from fetcher.all_searcher import AllSearcher
 from fetcher.jobnet_connector import search_ads
 from fetcher.search_result import SearchParams
 from pprint import pprint
@@ -37,6 +38,26 @@ def create_search_params():
     pprint(sp_2.to_params())
 
 
+def do_all_search():
+    all_searcher = AllSearcher()
+    sp = SearchParams(
+        10,
+        1,
+        "Python",
+        10,
+        1650
+    )
+    all_searcher.search_all(sp)
+    print(len(all_searcher.search_results))
+    all = all_searcher.get_all_job_ads()
+    for idx, ad in enumerate(all):
+        print(f"-------- {idx} --------")
+        pprint(ad)
+
+
+
+
+
 
 if __name__ == "__main__":
-    do_search()
+    do_all_search()
