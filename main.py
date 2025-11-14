@@ -49,8 +49,8 @@ def do_all_search():
     )
     all_searcher.search_all(sp)
     print(len(all_searcher.search_results))
-    all = all_searcher.get_all_job_ads()
-    for idx, ad in enumerate(all):
+    all_ads = all_searcher.get_all_job_ads()
+    for idx, ad in enumerate(all_ads):
         print(f"-------- {idx} --------")
         pprint(ad)
 
@@ -60,4 +60,4 @@ def do_all_search():
 
 
 if __name__ == "__main__":
-    do_all_search()
+    pass

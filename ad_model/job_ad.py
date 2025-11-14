@@ -1,11 +1,13 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime
 import json
+from typing import Any
+
 
 @dataclass
 class JobAd:
     country: str
-    postal_code: int
+    postal_code: str
     postal_district_name: str
     hiring_org_name: str
     occupation: str
@@ -23,6 +25,20 @@ class JobAd:
         return json.dumps(
             self.__dict__,
             default=lambda p: p.isoformat() if isinstance(p, datetime) else None)
+
+    def to_db_ready(self) -> tuple[dict[str, int | None | Any], str, str]:
+        def _transform_value(v):
+            if v is None: return None
+            if isinstance(v, bool): return 1 if v else 0
+            if isinstance(v, datetime): return int(v.timestamp() * 1000)
+            return v
+
+        row = { key: _transform_value(value)
+                for key, value in self.__dict__.items() }
+        cols = ", ".join(row.keys())
+        placeholders = ", ".join(["?"] * len(row))
+        return row, cols, placeholders
+
 
     @staticmethod
     def from_json(json_str: str):
@@ -45,3 +61,24 @@ class JobAd:
             job_ad_json["application_deadline_status"],
             job_ad_json["publication_date"]
         )
+
+    @staticmethod
+    def create_table_statement():
+        return """
+        CREATE TABLE job_ads(
+            job_ad_id TEXT PRIMARY KEY,
+            country TEXT,
+            postal_code TEXT,
+            postal_district_name TEXT,
+            hiring_org_name TEXT,
+            occupation TEXT,
+            job_ad_url TEXT,
+            work_place_address TEXT,
+            cvr INTEGER,
+            title TEXT,
+            description TEXT,
+            application_deadline INTEGER,
+            application_deadline_status TEXT,
+            publication_date INTEGER
+        );
+        """
