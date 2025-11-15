@@ -29,8 +29,8 @@ def install_db(db_file):
 def insert_job_ad_row(conn: sqlite3.Connection, job_ad: JobAd):
     row, cols, placeholders = job_ad.to_db_ready()
     sql = f"""
-    INSERT INTO job_ads ({cols}) 
-    VALUES ({placeholders})  
+    INSERT OR IGNORE INTO job_ads ({cols}) 
+    VALUES ({placeholders})
     """
     cursor = conn.cursor()
     cursor.execute(sql, tuple(row.values()))

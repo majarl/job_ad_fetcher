@@ -56,6 +56,58 @@ def try_insert_data():
     insert_job_ad_row(conn, job_ad_1)
 
 
+def try_reading_data():
+    conn = sqlite3.connect("try.db")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    result = cursor.execute("""
+    SELECT * FROM job_ads
+    WHERE job_ad_id = '123'
+    """)
+    job_ads = result.fetchall()
+    for ja in job_ads:
+        print(ja["country"])
+        print(ja.keys())
+
+
+def try_inserting_duplicates():
+    job_ad_1 = JobAd("Sweden",
+                      "19000",
+                      "Göteborg",
+                      "Izzted",
+                      "Coder",
+                      "123",
+                      "http:localhost",
+                      "NoWhere",
+                      800000,
+                      "Hacker",
+                      "Lorem Ipsum",
+                      datetime.now(),
+                      "some status",
+                      datetime.now())
+    job_ad_2 = JobAd("Norway",
+                      "19000",
+                      "Göteborg",
+                      "Izzted",
+                      "Coder",
+                      "123",
+                      "http:localhost",
+                      "NoWhere",
+                      800000,
+                      "Hacker",
+                      "Lorem Ipsum",
+                      datetime.now(),
+                      "some status",
+                      datetime.now())
+    with sqlite3.connect("try.db") as conn:
+        conn.row_factory = sqlite3.Row
+        insert_job_ad_row(conn, job_ad_1)
+        insert_job_ad_row(conn, job_ad_2)
+        print(f"""Has inserted:
+        f{job_ad_1=}
+        f{job_ad_2=}
+        """)
+
 
 
 
@@ -65,3 +117,5 @@ if __name__ == "__main__":
     test_job_ad()
     try_database()
     try_insert_data()
+    try_reading_data()
+    try_inserting_duplicates()
