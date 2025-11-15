@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from pprint import pprint
 
-from ad_model.db_operations_sqlite import clean_db, install_db, insert_job_ad_row
+from ad_model.db_operations_sqlite import clean_db, install_db, insert_job_ad_row, insert_multiple_job_ads
 from ad_model.job_ad import JobAd
 
 
@@ -108,6 +108,46 @@ def try_inserting_duplicates():
         f{job_ad_2=}
         """)
 
+def try_inserting_multiple():
+    job_ads = [JobAd("Sweden",
+                      "19000",
+                      "Göteborg",
+                      "Izzted",
+                      "Coder",
+                      "1",
+                      "http:localhost",
+                      "NoWhere",
+                      800000,
+                      "Hacker",
+                      "Lorem Ipsum",
+                      datetime.now(),
+                      "some status",
+                      datetime.now()),
+               JobAd("Sweden",
+                     "19000",
+                     "Göteborg",
+                     "Izzted",
+                     "Software developer",
+                     "2",
+                     "http:localhost",
+                     "NoWhere",
+                     800000,
+                     "Hacker",
+                     "Lorem Ipsum",
+                     datetime.now(),
+                     "some status",
+                     datetime.now()),
+               ]
+    with sqlite3.connect("try.db") as conn:
+        insert_multiple_job_ads(conn, job_ads)
+        res = conn.cursor().execute("""SELECT * FROM job_ads""")
+        print(len(res.fetchall()))
+
+
+
+
+
+
 
 
 
@@ -119,3 +159,4 @@ if __name__ == "__main__":
     try_insert_data()
     try_reading_data()
     try_inserting_duplicates()
+    try_inserting_multiple()

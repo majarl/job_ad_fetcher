@@ -37,3 +37,23 @@ def insert_job_ad_row(conn: sqlite3.Connection, job_ad: JobAd):
     conn.commit()
     print(f"Committed: {job_ad}")
 
+
+def insert_multiple_job_ads(conn: sqlite3.Connection, job_ad_list: list[JobAd]) -> int:
+    if len(job_ad_list) == 0:
+        return 0
+
+    rows = []
+    for job_ad in job_ad_list:
+        row, _, _ = job_ad.to_db_ready()
+        rows.append(tuple(row.values()))
+    row, cols, placeholders = job_ad_list[0].to_db_ready()
+
+    cursor = conn.cursor()
+    cursor.executemany(f"""
+    INSERT OR IGNORE INTO job_ads ({cols})
+    VALUES ({placeholders})
+    """, rows)
+    conn.commit()
+    print(f"Commited {len(rows)} rows.")
+    return len(rows)
+
