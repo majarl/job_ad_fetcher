@@ -1,7 +1,9 @@
+from ad_model.search_event import SearchEvent
 from fetcher.jobnet_connector import search_ads
 from fetcher.search_params import SearchParams
 from fetcher.search_result import SearchResult
 from fetcher.fetch_result import FetchResult
+from datetime import datetime
 import math
 
 
@@ -37,6 +39,14 @@ class AllSearcher:
         for i in range(2, self.number_of_pages + 1):
             self.search_nexts(params, i)
         print(f"Done. Got {len(self.search_results)}")
+        return SearchEvent(
+            se_id=-1,
+            search_terms=params.search_terms,
+            km_radius=params.km_radius,
+            postal_code=params.postal_code,
+            number_of_results=search_result.number_of_hits,
+            at_time=datetime.now()
+        )
 
     def print_progress(self, params: SearchParams, msg: str = ""):
         print(f" >>> {params.page_number} ({self.number_of_pages}) :")

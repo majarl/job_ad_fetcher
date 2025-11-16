@@ -47,12 +47,12 @@ def do_all_search():
         10,
         1650
     )
-    all_searcher.search_all(sp)
+    search_event = all_searcher.search_all(sp)
     print(len(all_searcher.search_results))
+    print(search_event)
     all_ads = all_searcher.get_all_job_ads()
     for idx, ad in enumerate(all_ads):
-        print(f"-------- {idx} --------")
-        pprint(ad)
+        pprint(f"{idx}: {ad["hiringOrgName"]} {ad["title"]} {ad["occupation"]}")
 
 
 
@@ -60,4 +60,4 @@ def do_all_search():
 
 
 if __name__ == "__main__":
-    pass
+    do_all_search()
