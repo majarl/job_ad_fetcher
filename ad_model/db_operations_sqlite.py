@@ -67,3 +67,27 @@ def insert_multiple_job_ads(conn: sqlite3.Connection, job_ad_list: list[JobAd]) 
     print(f"Commited {len(rows)} rows.")
     return len(rows)
 
+
+def insert_search_event(conn: sqlite3.Connection, se: SearchEvent):
+    row, cols, placeholders = se.to_db_ready()
+    sql = f"""
+    INSERT OR IGNORE INTO search_events ({cols})
+    VALUES ({placeholders})
+    """
+    cursor = conn.cursor()
+    cursor.execute(sql, tuple(row.values()))
+    conn.commit()
+    print(f"Commited: {se}")
+
+
+def insert_search_event_rel_job_ad(conn: sqlite3.Connection, serel: SearchEventRelationJobAd):
+    row, cols, placeholders = serel.to_db_ready()
+    sql = f"""
+    INSERT OR IGNORE INTO search_event_job_ad ({cols})
+    VALUES ({placeholders})
+    """
+
+    cursor = conn.cursor()
+    cursor.execute(sql, tuple(row.values()))
+    conn.commit()
+    print(f"Commited: {serel}")

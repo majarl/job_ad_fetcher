@@ -3,8 +3,10 @@ import os
 from datetime import datetime
 from pprint import pprint
 
-from ad_model.db_operations_sqlite import clean_db, install_db, insert_job_ad_row, insert_multiple_job_ads
+from ad_model.db_operations_sqlite import clean_db, install_db, insert_job_ad_row, insert_multiple_job_ads, \
+    insert_search_event, insert_search_event_rel_job_ad
 from ad_model.job_ad import JobAd
+from ad_model.search_event import SearchEvent, SearchEventRelationJobAd
 
 
 def test_job_ad():
@@ -108,6 +110,7 @@ def try_inserting_duplicates():
         f{job_ad_2=}
         """)
 
+
 def try_inserting_multiple():
     job_ads = [JobAd("Sweden",
                       "19000",
@@ -144,11 +147,38 @@ def try_inserting_multiple():
         print(len(res.fetchall()))
 
 
+def try_insert_search_event():
+    print("---------------------")
+    se = SearchEvent(se_id=-1,
+                     search_terms="Java",
+                     km_radius=10,
+                     postal_code=1650,
+                     number_of_results=42,
+                     at_time=datetime.now())
+    pprint(se.to_db_ready())
+    with sqlite3.connect("try.db") as conn:
+        conn.row_factory = sqlite3.Row
+        insert_search_event(conn, se)
+        res = conn.cursor().execute("SELECT * FROM search_events;")
+        for r in res.fetchall():
+            print(r.keys())
+            print(f"{r["se_id"]}, {r["search_terms"]}, {r["at_time"]}")
 
 
-
-
-
+def try_insert_search_event_rel():
+    print("---------------------")
+    serel = SearchEventRelationJobAd(
+        rel_id=-1,
+        se_id=1,
+        job_ad_id="something"
+    )
+    with sqlite3.connect("try.db") as conn:
+        conn.row_factory = sqlite3.Row
+        insert_search_event_rel_job_ad(conn, serel)
+        res = conn.cursor().execute("SELECT * FROM search_event_job_ad;")
+        for r in res.fetchall():
+            print(r.keys())
+            print(f"{r["rel_id"]}, {r["se_id"]}, {r["job_ad_id"]}")
 
 
 
@@ -160,3 +190,5 @@ if __name__ == "__main__":
     try_reading_data()
     try_inserting_duplicates()
     try_inserting_multiple()
+    try_insert_search_event()
+    try_insert_search_event_rel()
