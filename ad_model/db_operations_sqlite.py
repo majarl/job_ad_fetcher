@@ -77,7 +77,9 @@ def insert_search_event(conn: sqlite3.Connection, se: SearchEvent):
     cursor = conn.cursor()
     cursor.execute(sql, tuple(row.values()))
     conn.commit()
-    print(f"Commited: {se}")
+    se_id = cursor.lastrowid
+    print(f"Commited: {se}: {se_id}")
+    return se_id
 
 
 def insert_search_event_rel_job_ad(conn: sqlite3.Connection, serel: SearchEventRelationJobAd):

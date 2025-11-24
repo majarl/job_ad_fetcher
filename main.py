@@ -1,8 +1,8 @@
 import sqlite3
 
-from ad_model.db_operations_sqlite import insert_multiple_job_ads
+from ad_model.db_operations_sqlite import insert_multiple_job_ads, insert_search_event, insert_search_event_rel_job_ad
 from ad_model.job_ad import JobAd
-from ad_model.search_event import SearchEvent
+from ad_model.search_event import SearchEvent, SearchEventRelationJobAd
 from config import db_name
 from fetcher.all_searcher import AllSearcher
 from fetcher.jobnet_connector import search_ads
@@ -48,8 +48,20 @@ def save_scraping(se: SearchEvent, job_ad_list: [JobAd]):
     print(f"\n ---- Attempting to save job ads for search event ----")
     print(f" search_event: {se} containing {len(job_ad_list)} job ads.\n")
     with sqlite3.connect(db_name) as conn:
+        # Inserting ads:
         num_inserted = insert_multiple_job_ads(conn, job_ad_list)
         print(f"{num_inserted=}")
+
+        # Inserting search event:
+        se_id = insert_search_event(conn, se)
+        print(f"Search event inserted: {se} with id {se_id}")
+
+        # Relating search event with job ads:
+        for ad in job_ad_list:
+            serel = SearchEventRelationJobAd(-1, se_id, ad.job_ad_id)
+            insert_search_event_rel_job_ad(conn, serel)
+            print(f" {serel.rel_id}: {serel.se_id} --> {serel.job_ad_id}")
+
 
 
 def do_all_search():
