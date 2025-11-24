@@ -82,3 +82,22 @@ class JobAd:
             publication_date INTEGER
         );
         """
+
+    @staticmethod
+    def from_dict(job_ad_dict: dict):
+        return JobAd(
+            country=job_ad_dict["country"],
+            postal_code=job_ad_dict["postalCode"],
+            postal_district_name=job_ad_dict["postalDistrictName"],
+            hiring_org_name=job_ad_dict["hiringOrgName"],
+            occupation=job_ad_dict["occupation"],
+            job_ad_id=job_ad_dict["jobAdId"],
+            job_ad_url=job_ad_dict["jobAdUrl"],
+            work_place_address=job_ad_dict["workPlaceAddress"],
+            cvr=job_ad_dict["cvr"],
+            title=job_ad_dict["title"],
+            description=job_ad_dict["description"],
+            application_deadline=datetime.fromisoformat(job_ad_dict["applicationDeadline"]),
+            application_deadline_status=job_ad_dict["applicationDeadlineStatus"],
+            publication_date=datetime.fromisoformat(job_ad_dict["publicationDate"])
+        )

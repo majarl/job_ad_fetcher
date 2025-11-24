@@ -1,3 +1,4 @@
+from ad_model.job_ad import JobAd
 from ad_model.search_event import SearchEvent
 from fetcher.jobnet_connector import search_ads
 from fetcher.search_params import SearchParams
@@ -55,6 +56,7 @@ class AllSearcher:
         combined = []
         for sr in self.search_results:
             ads = sr.job_ads
-            combined.extend(ads)
+            ads_converted = [JobAd.from_dict(d) for d in ads]
+            combined.extend(ads_converted)
         return combined
 

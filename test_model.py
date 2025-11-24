@@ -32,6 +32,30 @@ def test_job_ad():
     assert(job_ad_1_back.job_ad_id == "123")
 
 
+def try_from_dict():
+    a_dict = {'applicationDeadline': '2025-12-14T00:00:00+01:00',
+              'applicationDeadlineStatus': 'ExpirationDate',
+              'conceptUriDa': 'http://data.star.dk/esco/occupation/7e96834b-070c-43d7-b826-8d396bd02b21',
+              'country': 'Danmark',
+              'cvr': '29190623',
+              'description': 'something textual',
+              'hasLogo': True,
+              'hiringOrgName': 'Frederiksberg Hospital',
+              'isFavorite': False,
+              'isSeen': False,
+              'jobAdId': '14380ab9-60d6-4a70-91ae-6005b8612f17',
+              'jobAdUrl': '',
+              'occupation': 'Biomediciner',
+              'postalCode': 2400,
+              'postalDistrictName': 'København NV',
+              'publicationDate': '2025-11-20T00:00:00+01:00',
+              'title': 'Senior Mass Spectrometry Specialist',
+              'workHourPartTime': False,
+              'workPlaceAddress': ''}
+    job_ad = JobAd.from_dict(a_dict)
+    print(job_ad)
+
+
 def try_database():
     db_file = "try.db"
     clean_db(db_file)
@@ -185,6 +209,7 @@ def try_insert_search_event_rel():
 
 if __name__ == "__main__":
     test_job_ad()
+    try_from_dict()
     try_database()
     try_insert_data()
     try_reading_data()
