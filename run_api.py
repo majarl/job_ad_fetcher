@@ -5,7 +5,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 
-from time_serie import TimeSerie
+from api.time_serie import TimeSerie
+from resources.config import db_name
 
 app = FastAPI()
 app.add_middleware(
@@ -24,7 +25,7 @@ def info():
 
 @app.get("/search_events", response_class=PlainTextResponse)
 def search_events():
-    conn = sqlite3.connect("searches.db")
+    conn = sqlite3.connect(db_name)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM search_events")
@@ -42,7 +43,7 @@ def search_events():
 
 @app.get("/search_events/python")
 def search_events_python():
-    with sqlite3.connect("searches.db") as conn:
+    with sqlite3.connect(db_name) as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute("""
@@ -60,7 +61,6 @@ def search_events_python():
 
         time_serie = TimeSerie("number.ads", datapoints, {"terms": "Python"}, "n")
         return time_serie
-
 
 
 if __name__ == "__main__":
