@@ -3,7 +3,7 @@ import sqlite3
 from ad_model.db_operations_sqlite import insert_multiple_job_ads, insert_search_event, insert_search_event_rel_job_ad
 from ad_model.job_ad import JobAd
 from ad_model.search_event import SearchEvent, SearchEventRelationJobAd
-from config import db_name
+from resources.config import db_name
 from fetcher.all_searcher import AllSearcher
 from fetcher.jobnet_connector import search_ads
 from fetcher.search_result import SearchParams
