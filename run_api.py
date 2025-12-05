@@ -1,4 +1,7 @@
+import random
 import sqlite3
+
+from datetime import datetime, timedelta
 
 import uvicorn
 from fastapi import FastAPI
@@ -39,6 +42,24 @@ def search_events():
                    f"{row["postal_code"]},{row["number_of_results"]},"
                    f"{row["at_time"]}\n")
     return output
+
+
+@app.get("/test_csv", response_class=PlainTextResponse)
+def test_csv():
+    """
+    https://grafana.com/docs/grafana/latest/visualizations/panels-visualizations/visualizations/time-series/
+    :return:
+    """
+    now = datetime.now()
+    next_time = now - timedelta(minutes=20)
+    output = '"A-series", "time"\n'
+    for i in range(0, 100):
+        v = random.randint(0, 3000)
+        output += f"{v},{next_time}\n"
+        next_time = next_time + timedelta(minutes=random.randint(10, 100))
+
+    return output
+
 
 
 @app.get("/search_events/python")
